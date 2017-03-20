@@ -1,0 +1,41 @@
+﻿Información sobre los ficheros .cfg y su estrutura.
+
+
+Comandos:
+
+bot.abrir
+bot.cerrar
+bot.navegar
+bot.carpeta
+bot.archivo
+bot.programa
+bot.juego
+bot.nada
+bot.nada
+bot.chat.conectar
+bot.chat.desconectar
+bot.chat.nuevo
+bot.chat.borrar
+bot.chat.limpiar
+bot.test
+
+---------------------------------
+
+Edición de archivos .cfg:
+
+
+Formato de los archivos:
+
+Hay 6 tipos de archivos(Command,Error,Help,Other,Problem,Warning).
+Cada archivo se divide en secciones y las secciones tienen 16 posibles variables, siendo la primera siempre de error (0)(1-15).
+Cada una de las variables redirecciona a un subarchivo con su numero indicativo (ejemplo: Commands -> [Global] 1=Test -> Commands_1) 
+y estos se componen de la misma forma que los anteriores.
+
+
+Variables de auto completado:
+
+%UN% = Nombre del usuario
+%BN% = Nombre del bot ("Chat Bot")
+%CN% = Nombre del PC
+...
+

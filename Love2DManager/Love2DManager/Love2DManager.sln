@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Love2DManager", "Love2DManager\Love2DManager.csproj", "{90B8F37F-2D7A-4B59-B58F-4073A1D20467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90B8F37F-2D7A-4B59-B58F-4073A1D20467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90B8F37F-2D7A-4B59-B58F-4073A1D20467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90B8F37F-2D7A-4B59-B58F-4073A1D20467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90B8F37F-2D7A-4B59-B58F-4073A1D20467}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
