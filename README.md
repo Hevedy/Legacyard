@@ -1,2 +1,2 @@
 # Legacyard
-Old apps, tools and samples
+Old apps, tools and samples by Hevedy.

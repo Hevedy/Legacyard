@@ -11,7 +11,7 @@ Project Name: Urho3D Launcher
 Last Version: 0.0.5  
 Author: Hevedy
 
-![alt text](/Urho3D_Launcher.png "Urho3D Launcher ") 
+![alt text](/Urho3DLauncher/Urho3D_Launcher.png "Urho3D Launcher ") 
 
 
 Urho3D Launcher is a Launcher for Urho3D engine created in C++ with QT.
