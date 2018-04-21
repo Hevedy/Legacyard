@@ -1,0 +1,154 @@
+import bpy, bmesh, os
+from bpy import context as C
+    
+    
+# Edit directly from object
+def triangulate_object(obj):
+    me = obj.data
+    # Get a BMesh representation
+    bm = bmesh.new()
+    bm.from_mesh(me)
+
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+
+    # Finish up, write the bmesh back to the mesh
+    bm.to_mesh(me)
+    bm.free()
+    
+    
+# Edit from edit mode
+def triangulate_edit_object(obj):
+    me = obj.data
+    # Get a BMesh representation
+    bm = bmesh.from_edit_mesh(me)
+
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+    # Show the updates in the viewport
+    # and recalculate n-gon tessellation.
+    bmesh.update_edit_mesh(me, True)
+
+
+# Cleanup from object
+def dissolve_degenerate_object(obj):
+    me = obj.data
+    # Get a BMesh representation
+    bm = bmesh.new()
+    bm.from_mesh(me)
+
+    bmesh.ops.dissolve_degenerate(bm, dist=0.0, edges=bm.edges[:])
+    #bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+
+    # Finish up, write the bmesh back to the mesh
+    bm.to_mesh(me)
+    bm.free()
+
+
+# Decimate from object
+#def decimate_object(obj):
+    #me = obj.data
+    # Get a BMesh representation
+    #bm = bmesh.new()
+    #bm.from_mesh(me)
+
+    #bmesh.ops.decimate(ratio=0.5, use_vertex_group=False, vertex_group_factor=1.0, invert_vertex_group=False, use_symmetry=False, symmetry_axis='Y')
+    #bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+
+    # Finish up, write the bmesh back to the mesh
+    #bm.to_mesh(me)
+    #bm.free()
+
+##Cleans all decimate modifiers
+def cleanAllDecimateModifiers(obj):
+    for m in obj.modifiers:
+        if(m.type=="DECIMATE"):
+#           print("Removing modifier ")
+            obj.modifiers.remove(modifier=m)
+
+
+bpy.ops.object.duplicate_move()
+bpy.ops.object.move_to_layer(layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True))
+
+
+
+#bpy.context.scene.layers[lbpy.context.scene.render.layers.active] = False
+bpy.context.scene.layers[19] = True
+bpy.context.scene.layers[bpy.context.scene.active_layer] = True
+
+
+
+
+bpy.ops.object.mode_set(mode="EDIT")
+
+bm = bmesh.from_edit_mesh(C.object.data)
+
+edges = []
+
+# Only need in vertical for distances
+
+# In the range -100 and 100 cut each x
+for i in range(-100, 100, 20):
+        ret = bmesh.ops.bisect_plane(bm, geom=bm.verts[:]+bm.edges[:]+bm.faces[:], plane_co=(i,0,0), plane_no=(-1,0,0))
+        bmesh.ops.split_edges(bm, edges=[e for e in ret['geom_cut'] if isinstance(e, bmesh.types.BMEdge)])
+
+
+#for i in range(-10, 10, 2):
+        #ret = bmesh.ops.bisect_plane(bm, geom=bm.verts[:]+bm.edges[:]+bm.faces[:], plane_co=(0,i,0), plane_no=(0,1,0))
+        #bmesh.ops.split_edges(bm, edges=[e for e in ret['geom_cut'] if isinstance(e, bmesh.types.BMEdge)])
+                
+
+bmesh.update_edit_mesh(C.object.data)
+
+bpy.ops.mesh.separate(type='LOOSE')
+
+bpy.ops.object.mode_set(mode='OBJECT')
+
+
+for obj in bpy.context.selected_objects:
+    triangulate_object(obj)
+    dissolve_degenerate_object(obj)
+    if(obj.type=="MESH"):
+        cleanAllDecimateModifiers(obj)
+        modifier=obj.modifiers.new('DecimateMod','DECIMATE')
+        modifier.ratio=0.250
+        modifier.use_collapse_triangulate=True
+        bpy.context.scene.update()
+
+
+for ob in bpy.context.selected_objects:
+    bpy.context.scene.objects.active = ob
+    for mod in [m for m in ob.modifiers if m.type == 'DECIMATE']:
+        bpy.ops.object.modifier_apply( modifier = mod.name )
+        
+#target_obj = context.active_object
+#for modifier in target_obj.modifiers:
+    #bpy.ops.object.modifier_apply(modifier=modifier.name)
+
+
+
+    # deselect all meshes
+    #bpy.ops.object.select_all(action='DESELECT')
+    # select the object
+    #obj.select = True
+    #bpy.ops.object.mode_set(mode="EDIT")
+    #bpy.ops.mesh.decimate(ratio=0.250, use_vertex_group=False, vertex_group_factor=1.0, invert_vertex_group=False, use_symmetry=False, symmetry_axis='Y')
+    #bpy.ops.object.mode_set(mode='OBJECT')
+
+
+#bpy.ops.object.mode_set(mode="EDIT")
+
+#ob = bpy.context.object # get the active object for example py.context.selected_objects:
+#mesh = ob.data
+
+#for i in ob:
+    #bm=bmesh.from_edit_mesh(i.data)
+    #bmesh.ops.dissolve_degenerate(i)
+    #bmesh.ops.dissolve_degenerate(i, dist=0.0, threshold=0.0001)
+    #bpy.ops.mesh.quads_convert_to_tris(quad_method="BEAUTY", ngon_method="BEAUTY")
+
+#bpy.ops.object.mode_set(mode='OBJECT')
+
+
+
+#bpy.ops.mesh.bisect((0, 0, 0), (1, 0, 0), False, False, True, 0.0001, 0, 0, 0, 0, 1002)
+
+# bpy.ops.mesh.subdivide()
