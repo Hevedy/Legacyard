@@ -1,0 +1,38 @@
+# Script to import and cleanup meshes from TrenchBroom
+import bpy
+import bmesh
+
+# Transforms
+tCombine=False #Combine meshes or do them individually until export
+tApplyScale=True #Apply scales
+tScale=0.0125 #Trenchbroom scale
+
+# Editing
+mDistance=0.001 #Default 0.0001
+
+# Select all meshes
+bpy.ops.object.select_all(action='DESELECT')
+bpy.ops.object.select_by_type(type='MESH')
+
+if(tApplyScale):
+    # Scale meshes
+    bpy.ops.transform.resize(value=(tScale, tScale, tScale), orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_matrix_type='GLOBAL', 
+    mirror=True, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1, use_proportional_connected=False, use_proportional_projected=False)
+    # Apply scale to meshes
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+# Set objects and then get meshes from them
+objects = bpy.context.selected_objects
+meshes = set(o.data for o in objects)
+
+# Edit individual meshes using bmesh
+bm = bmesh.new()
+for m in meshes:
+    bm.from_mesh(m)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=mDistance)
+    bm.to_mesh(m)
+    #Todo clear inside faces
+    m.update()
+    bm.clear()
+    
+bm.free()
